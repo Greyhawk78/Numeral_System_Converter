@@ -1,77 +1,66 @@
 package converter;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Scanner;
 
+
 public class Main {
+
+    public static String convertInteger (String wholePart, int radix,int newradix) {
+        long temp;
+        StringBuilder result = new StringBuilder();
+        if (radix == 1) {
+            temp = wholePart.length();
+        } else {
+            temp = Long.parseLong(wholePart, radix);
+        }
+        if (newradix == 1) {
+            for (int i = 0; i < Long.parseLong(wholePart); i++) {
+                result.append("1");
+            }
+        } else {
+            result.append(Long.toString(temp, newradix));
+        }
+        return result.toString();
+    }
+
+    public static String convertFractal (String fractalPart, int radix,int newradix) {
+        if (fractalPart.equals("")) return "";
+        double temp=0;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i <fractalPart.length(); i++) {
+            temp+=(Long.parseLong(String.valueOf(fractalPart.charAt(i)),radix))/Math.pow(radix,i+1);
+        }
+        while (temp>1) {
+            temp=temp/10;
+        }
+
+        for (int i=0; i<5; i++) {
+            temp=temp*newradix;
+            double tempFractionalPart = temp % 1;
+            double tempIntegralPart = temp - tempFractionalPart;
+            sb.append(Long.toString((long) tempIntegralPart, newradix));
+            temp=temp-tempIntegralPart;
+        }
+        return sb.toString() ;
+
+    }
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
-        Long number = scan.nextLong();
-        String trash = scan.nextLine();
-        int base= scan.nextInt();
-        Deque <Integer> stack = new ArrayDeque<>();
-        StringBuilder sb = new StringBuilder();
-        switch (base) {
-            case 2 :
-             do {
-                  stack.offerLast((int) (number%2));
-                  number=number/2;
-              } while (number>0);
-             sb.append("0b");
-             while (stack.size()>0) {
-                 sb.append(stack.pollLast());
-             }
-             System.out.println(sb);
-             break;
-            case 8:
-                do {
-                    stack.offerLast((int) (number%8));
-                    number=number/8;
-                } while (number>0);
-                sb.append("0");
-                while (stack.size()>0) {
-                    sb.append(stack.pollLast());
-                }
-                System.out.println(sb);
-                break;
-            case 16:
-                do {
-                    stack.offerLast((int) (number%16));
-                    number=number/16;
-                } while (number>0);
-                sb.append("0x");
-                while (stack.size()>0) {
-                    int hex=stack.pollLast();
-                    switch (hex) {
-                        case 15:
-                            sb.append("f");
-                            break;
-                        case 14:
-                            sb.append("e");
-                            break;
-                        case 13:
-                            sb.append("d");
-                            break;
-                        case 12:
-                            sb.append("c");
-                            break;
-                        case 11:
-                            sb.append("b");
-                            break;
-                        case 10:
-                            sb.append("a");
-                            break;
-                        default:
-                            sb.append(hex);
-                            break;
-                    }
-                }
-                System.out.println(sb);
-                break;
-            default:
-                System.out.println("Unknown radix.");
-                break;
+        int radix = Integer.parseInt(scan.nextLine());
+        String number = scan.nextLine();
+        int newradix = Integer.parseInt(scan.nextLine());
+
+        String [] fullNumber = number.split("\\.");
+        String wholePart=fullNumber[0];
+        String fractalPart="";
+
+        if (fullNumber.length>1) {
+            fractalPart=fullNumber[1];
         }
+
+        wholePart=convertInteger(wholePart,radix,newradix);
+        fractalPart=convertFractal (fractalPart,radix,newradix);
+
+        System.out.println(fractalPart.equals("")?wholePart:wholePart+"."+fractalPart);
     }
 }
