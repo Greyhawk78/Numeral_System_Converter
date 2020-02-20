@@ -46,9 +46,16 @@ public class Main {
     }
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
-        int radix = Integer.parseInt(scan.nextLine());
-        String number = scan.nextLine();
-        int newradix = Integer.parseInt(scan.nextLine());
+        int radix = 0,newradix=0;
+        String number;
+        if (scan.hasNextInt()) radix = Integer.parseInt(scan.nextLine());
+        number = scan.nextLine();
+        if (scan.hasNextInt())newradix = Integer.parseInt(scan.nextLine());
+
+        if (radix>36|| radix<1 ||newradix >36 || newradix <1) {
+            System.out.println("Error. Radix should be between 1 and 36");
+            return;
+        }
 
         String [] fullNumber = number.split("\\.");
         String wholePart=fullNumber[0];
@@ -57,10 +64,13 @@ public class Main {
         if (fullNumber.length>1) {
             fractalPart=fullNumber[1];
         }
-
-        wholePart=convertInteger(wholePart,radix,newradix);
-        fractalPart=convertFractal (fractalPart,radix,newradix);
-
+        try {
+            wholePart = convertInteger(wholePart, radix, newradix);
+            fractalPart = convertFractal(fractalPart, radix, newradix);
+        } catch (Exception e) {
+            System.out.println("Error");
+            return;
+        }
         System.out.println(fractalPart.equals("")?wholePart:wholePart+"."+fractalPart);
     }
 }
